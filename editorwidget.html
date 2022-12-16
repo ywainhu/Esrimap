@@ -1,0 +1,115 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Edit features with the Editor widget | Sample | ArcGIS API for JavaScript
+      4.25
+    </title>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.25/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.25/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <script>
+      require(["esri/WebMap", "esri/views/MapView", "esri/widgets/Editor"], (
+        WebMap,
+        MapView,
+        Editor
+      ) => {
+        let pointLayer;
+
+        // Create a map from the referenced webmap item id
+        const webmap = new WebMap({
+          portalItem: {
+            id: "459a495fc16d4d4caa35e92e895694c8"
+          }
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: webmap
+        });
+
+        view.when(() => {
+          view.map.loadAll().then(() => {
+            view.map.editableLayers.forEach((layer) => {
+              if (layer.type === "feature") {
+                pointLayer = layer;
+
+              }
+            });
+          });
+
+          // Create layerInfos for layers in Editor. This
+          // sets the fields for editing.
+
+          const pointInfos = {
+            layer: pointLayer,
+            formTemplate: {
+              // autocasts to FormTemplate
+              elements: [
+                {
+                  // autocasts to Field Elements
+                  type: "field",
+                  fieldName: "HazardType",
+                  label: "Hazard type"
+                },
+                {
+                  type: "field",
+                  fieldName: "Description",
+                  label: "Description"
+                },
+                {
+                  type: "field",
+                  fieldName: "SpecialInstructions",
+                  label: "Special Instructions"
+                },
+                {
+                  type: "field",
+                  fieldName: "Status",
+                  label: "Status"
+                },
+                {
+                  type: "field",
+                  fieldName: "Priority",
+                  label: "Priority"
+                }
+              ]
+            }
+          };
+
+
+
+          const editor = new Editor({
+            view: view,
+            layerInfos: [pointInfos]
+          });
+
+          // Add the widget to the view
+          view.ui.add(editor, "top-right");
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>

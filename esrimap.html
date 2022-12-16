@@ -1,0 +1,497 @@
+<!--
+
+To run this demo, you need to replace 'YOUR_API_KEY' with an API key from the ArcGIS Developers dashboard.
+
+Sign up for a free account and get an API key.
+
+https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
+
+-->
+
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <title>ArcGIS API Map</title>
+        <script type="module" src="https://js.arcgis.com/calcite-components/1.0.0-beta.97/calcite.esm.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/1.0.0-beta.97/calcite.css" />
+
+        <style>
+          html,
+          body,
+          #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+          }
+          .container {
+          height: 40%;
+          width: 100%;
+          }
+           
+          body {
+            display: flex;
+          }
+
+          calcite-loader {
+            align-self: center;
+            justify-self: center;
+          }
+
+          #header-title {
+            margin-left: 1rem;
+            margin-right: 1rem;
+          }
+
+          #info-content {
+            padding: 0.75rem;
+          }
+
+          calcite-rating {
+            margin-top: 0.25rem;
+          }
+
+          #update {
+            padding: 6px;
+          }
+
+          #form {
+            background: #fff;
+          }
+
+          /* replaces esri-widget--panel */
+          .scroller {
+            overflow-x: hidden;
+            overflow-y: auto;
+          }
+        </style>
+
+        <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css">
+        <script src="https://js.arcgis.com/4.25/"></script>
+
+        <script>
+          require([ 
+            "esri/config",  
+            "esri/Map", 
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/BasemapToggle",
+            "esri/widgets/BasemapGallery",
+            "esri/Basemap",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/LayerList",
+            "esri/widgets/FeatureTable",
+            "esri/widgets/Legend",
+            "esri/widgets/Print",
+            "esri/layers/GraphicsLayer",
+            "esri/widgets/Sketch/SketchViewModel",
+            "esri/Graphic",
+            "esri/geometry/geometryEngineAsync",
+            "esri/widgets/Search",
+            "esri/widgets/FeatureForm",
+            "esri/form/FormTemplate"
+          ],function(
+            esriConfig, 
+            Map,
+            WebMap, 
+            MapView, 
+            BasemapToggle, 
+            BasemapGallery,
+            Basemap,
+            FeatureLayer,
+            LayerList,
+            FeatureTable, 
+            Legend, 
+            Print,
+            GraphicsLayer,
+            SketchViewModel,
+            Graphic,
+            geometryEngineAsync,
+            Search,
+            FeatureForm,
+            FormTemplate) {
+
+            esriConfig.apiKey = "AAPKbddc507b56494edfa243a62cd6cf64afF_XwhWVolHr934skRIfCpSY4kWhK2qRfN5MeLBQS6MxNm6tNwYdUOCEWlwM7OnVL";
+
+            const layerRenderer = {
+                "type": "simple",
+                "symbol": {
+                    "type": "simple-marker",
+                     color: "blue",
+                    "size": "8px"
+                }
+            }
+
+            const popupTrailheads = {
+                "title": "Trailhead",
+                "content": "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
+            }
+            const loxlayer = new FeatureLayer({
+            url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0",
+            renderer: layerRenderer,
+            outFields: ["TRL_NAME","CITY_JUR","X_STREET","PARKING","ELEV_FT"],
+            popupTemplate: popupTrailheads,
+            formTemplate: {
+            // Autocasts to new FormTemplate
+              title: "Update Features",
+              description: "Provide information ",
+              elements: [
+                {
+                // Autocasts to new GroupElement
+                type: "group",
+                label: "必填",
+                description: "Field inspector information",
+                elements: [
+                  {
+                    // Autocasts to new FieldElement
+                    type: "field",
+                    fieldName: "inspector",
+                    label: "name"
+                  }
+                  ]
+                }, 
+                // end of first group element
+                {
+                type: "group",
+                label: "选填",
+                description: "Type of insurance coverage",
+                elements: [
+                  {
+                    type: "field",
+                    fieldName: "rentinsur",
+                    label: "Renter's"
+                  }
+                ]
+                } // end of second group element
+              ]
+            }
+          });
+
+            let loxlayerView;
+            loxlayer
+              .when(() => {
+                view.whenLayerView(loxlayer).then(function (layerView) {
+                  loxlayerView = layerView;
+                });
+              })
+              .catch(errorCallback);
+
+            function errorCallback(error) {
+              console.log("error happened:", error.message);
+            }
+
+            const map = new Map({
+              basemap: "arcgis-topographic" // Basemap layer service
+            });
+
+            // console.log(map);
+            map.add(loxlayer);
+
+            const view = new MapView({
+              map: map,
+              center: [-118.80543,34.02700], // Longitude, latitude
+              zoom: 10, // Zoom level
+              container: "viewDiv" // Div element
+            });
+
+            // Add a new feature form with grouped fields
+            const form = new FeatureForm({
+              view: view, // required if using Arcade expressions using the $map global variable
+              container: "form",
+              groupDisplay: "sequential", // only display one group at a time
+              layer: loxlayer
+            });
+
+
+            const featureTable = new FeatureTable({
+            view: view,
+            layer: loxlayer,
+            editingEnabled: true, 
+            multiSortEnabled: true,
+            highlightOnRowSelectEnabled: true,
+            container: document.getElementById("tableDiv")
+            });
+
+        // this array will keep track of selected feature objectIds to
+        // sync the layerview feature effects and feature table selection
+            let features = [];
+
+            // Listen for the table's selection-change event
+            featureTable.on("selection-change", (changes) => {
+              // if the feature is unselected then remove the objectId
+              // of the removed feature from the features array
+              changes.removed.forEach((item) => {
+                const data = features.find((data) => {
+                  return data === item.objectId;
+                });
+                if (data) {
+                  features.splice(features.indexOf(data), 1);
+                }
+              });
+
+              // If the selection is added, push all added selections to array
+              changes.added.forEach((item) => {
+                features.push(item.objectId);
+              });
+
+
+            });
+
+            // polygonGraphicsLayer will be used by the sketchviewmodel
+            // show the polygon being drawn on the view
+            const polygonGraphicsLayer = new GraphicsLayer();
+            map.add(polygonGraphicsLayer);
+
+            // add the select by rectangle button the view
+            // view.ui.add("select-by-rectangle", "bottom-right");
+            const selectButton = document.getElementById("select-by-rectangle");
+
+            // click event for the select by rectangle button
+            selectButton.addEventListener("click", () => {
+              view.popup.close();
+              sketchViewModel.create("rectangle");
+            });
+
+           // add the clear selection button the view
+            // view.ui.add("clear-selection", "bottom-right");
+            
+            document
+              .getElementById("clear-selection")
+              .addEventListener("click", () => {
+                featureTable.clearSelection();
+                featureTable.filterGeometry = null;
+                polygonGraphicsLayer.removeAll();
+              });
+
+              // create a new sketch view model set its layer
+            const sketchViewModel = new SketchViewModel({
+              view: view,
+              layer: polygonGraphicsLayer
+            });
+        // Once user is done drawing a rectangle on the map
+        // use the rectangle to select features on the map and table
+            sketchViewModel.on("create", async (event) => {
+              if (event.state === "complete") {
+                // this polygon will be used to query features that intersect it
+                const geometries = polygonGraphicsLayer.graphics.map(function (
+                  graphic
+                ) {
+                  return graphic.geometry;
+                });
+                const queryGeometry = await geometryEngineAsync.union(
+                  geometries.toArray()
+                );
+                selectFeatures(queryGeometry);
+              }
+
+            });
+            
+            function selectFeatures(geometry) {
+              if (loxlayerView) {
+                // create a query and set its geometry parameter to the
+                // rectangle that was drawn on the view
+                const query = {
+                  geometry: geometry,
+                  outFields: ["*"]
+                };
+
+                // query graphics from the csv layer view. Geometry set for the query
+                // can be polygon for point features and only intersecting geometries are returned
+                loxlayerView
+                  .queryFeatures(query)
+                  .then((results) => {
+                    
+                    if (results.features.length === 0) {
+                      clearSelection();
+                    } else {
+                      // pass in the query results to the table by calling its selectRows method.
+                      // This will trigger FeatureTable's selection-change event
+                      // where we will be setting the feature effect on the csv layer view
+                      featureTable.filterGeometry = geometry;
+                      featureTable.selectRows(results.features);
+
+                      editFeature = results.features;
+
+                      // display the attributes of selected feature in the form
+                      form.feature = editFeature;
+
+                    }
+                  })
+                  .catch(errorCallback);
+              }
+            }
+            
+
+            const basemaps = new BasemapGallery({
+              view,
+              container: "basemaps-container"
+            });
+            const featureForm = new FeatureForm({
+              view,
+              container: "FeatureForm-container"
+            });
+            const layerList = new LayerList({
+              view,
+              selectionEnabled: true,
+              container: "layers-container"
+            });
+            const legend = new Legend({
+              view,
+              container: "legend-container"
+            });
+            const print = new Print({
+              view,
+              container: "print-container"
+            });
+            const search = new Search({
+              view,
+              container: "search-container"
+            });
+
+            view.when(() => {
+              // const { title, description, thumbnailUrl, avgRating } = map.portalItem;
+              document.querySelector("#header-title").textContent = 'Map Test';
+              document.querySelector("#item-description").innerHTML = 'please contact YH at 123456';
+              // document.querySelector("#item-thumbnail").src = thumbnailUrl;
+              // document.querySelector("#item-rating").value = 4;
+ 
+              let activeWidget;
+
+              const handleActionBarClick = ({ target }) => {
+                if (target.tagName !== "CALCITE-ACTION") {
+                  return;
+                }
+
+                if (activeWidget) {
+                  document.querySelector(`[data-action-id=${activeWidget}]`).active = false;
+                  document.querySelector(`[data-panel-id=${activeWidget}]`).hidden = true;
+                }
+
+                const nextWidget = target.dataset.actionId;
+                if (nextWidget !== activeWidget) {
+                  document.querySelector(`[data-action-id=${nextWidget}]`).active = true;
+                  document.querySelector(`[data-panel-id=${nextWidget}]`).hidden = false;
+                  activeWidget = nextWidget;
+                } else {
+                  activeWidget = null;
+                }
+              };
+
+              document.querySelector("calcite-action-bar").addEventListener("click", handleActionBarClick);
+
+              let actionBarExpanded = false;
+
+              document.addEventListener("calciteActionBarToggle", event => {
+                actionBarExpanded = !actionBarExpanded;
+                view.padding = {
+                  left: actionBarExpanded ? 150 : 60
+                };
+              });
+               
+              document.querySelector("calcite-shell").hidden = false;
+              document.querySelector("calcite-loader").active = false;
+
+            });
+            view.ui.add("update", "top-right");
+            
+          });
+
+        </script>
+
+    </head>
+    <body>
+      <calcite-loader active></calcite-loader>
+
+      <calcite-shell content-behind>
+        <h2 id="header-title" slot="header">
+          <!-- Dynamically populated -->
+        </h2>
+
+        <calcite-shell-panel slot="panel-start" detached>
+          <calcite-action-bar slot="action-bar">
+            <calcite-action data-action-id="layers" icon="layers" text="Layers"></calcite-action>
+            <calcite-action data-action-id="basemaps" icon="basemap" text="Basemaps"></calcite-action>
+            <calcite-action data-action-id="legend" icon="legend" text="Legend"></calcite-action>
+            <calcite-action data-action-id="featureForm"  icon="edit-attributes" text="更改属性"></calcite-action>
+            <calcite-action data-action-id="print" icon="print" text="Print"></calcite-action>
+            <calcite-action data-action-id="search" icon="search" text="查找"></calcite-action>
+            <calcite-action data-action-id="Selection" icon="cursor-marquee" text="选择"></calcite-action>
+            <calcite-action data-action-id="information" icon="information" text="Information"></calcite-action>
+          </calcite-action-bar>
+
+                  <!-- Map-specific panels (each one provides a div for ArcGIS JavaScript API widgets) -->
+        <calcite-panel heading="Layers" height-scale="l" data-panel-id="layers" hidden>
+          <div id="layers-container"></div>
+        </calcite-panel>
+        <calcite-panel heading="Basemaps" height-scale="l" data-panel-id="basemaps" hidden>
+          <div id="basemaps-container"></div>
+        </calcite-panel>
+        <calcite-panel heading="Legend" height-scale="l" data-panel-id="legend" hidden>
+          <div id="legend-container"></div>
+        </calcite-panel>
+        <calcite-panel heading="更改属性" height-scale="l" data-panel-id="featureForm" hidden>
+          <div id="FeatureForm-container">
+            <div id="update" class="esri-widget esri-hidden">
+              <div id="form" class="scroller esri-component"></div>
+              <input
+                type="button"
+                class="esri-button"
+                value="Update assessment"
+                id="btnUpdate"
+              />
+            </div>
+          </div>
+        </calcite-panel>
+        <calcite-panel heading="Print" height-scale="l" data-panel-id="print" hidden>
+          <div id="print-container"></div>
+        </calcite-panel>
+        <calcite-panel heading="Search" height-scale="l" data-panel-id="search" hidden>
+          <div id="search-container"></div>
+        </calcite-panel>
+
+        <calcite-panel heading="选择" height-scale="l" data-panel-id="Selection" hidden>
+          <div
+          id="select-by-rectangle"
+          class="esri-widget esri-widget--button esri-widget esri-interactive"
+          title="Select features by rectangle"
+        >
+          <span class="esri-icon-checkbox-unchecked"></span>
+        </div>
+        <div
+        id="clear-selection"
+        class="esri-widget esri-widget--button esri-widget esri-interactive"
+        title="Clear selection"
+      >
+        <span class="esri-icon-erase"></span>
+      </div>
+        </calcite-panel>
+
+        <!-- Info panel (populates with info from the web map) -->
+        <calcite-panel heading="Details" data-panel-id="information" hidden>
+          <div id="info-content">
+            <!-- <img id="item-thumbnail" alt="webmap thumbnail" /> -->
+            <div id="item-description">
+              <!-- Dynamically populated -->
+            </div>
+            <calcite-label layout="inline">
+              <!-- <b>Rating:</b>
+              <calcite-rating id="item-rating" read-only>
+              </calcite-rating> -->
+            </calcite-label>
+          </div>
+        </calcite-panel>
+  
+        </calcite-shell-panel>
+  
+        <div id="viewDiv"></div>
+        <div class="container">
+          <div id="tableDiv"></div>
+        </div>
+
+  
+      </calcite-shell>
+
+
+    </body>
+</html>
