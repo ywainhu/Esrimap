@@ -60,13 +60,24 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
           #select-by-rectangle{
             width: 100%;
+           align-items: flex-start;
           }
+          div #select-by-rectangle:active { background:rgb(225, 240, 250); }
+          div #select-by-rectangle:visited { background-color:rgb(225, 240, 250); }
+          div #select-by-rectangle:focus { background-color:rgb(245, 245, 247); }
+  
+
           #clear-selection{
-            position: relative;
-            right: 0;
+            left: 0;
             width: 100%;
             text-align: left;
+            align-items: flex-start;
 
+          }
+          div #clear-selec:visited { background-color:rgb(225, 240, 250); }
+
+          #selection-container {
+            align-items: flex-start;
           }
 
           /* replaces esri-widget--panel */
@@ -89,6 +100,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             "esri/widgets/BasemapGallery",
             "esri/Basemap",
             "esri/layers/FeatureLayer",
+            "esri/layers/CSVLayer",
             "esri/widgets/LayerList",
             "esri/widgets/FeatureTable",
             "esri/widgets/Legend",
@@ -109,6 +121,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             BasemapGallery,
             Basemap,
             FeatureLayer,
+            CSVLayer,
             LayerList,
             FeatureTable, 
             Legend, 
@@ -177,6 +190,12 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             }
           });
 
+            const csvLayer = new CSVLayer({
+              url: "MBTANKData.CSV",
+              copyright: "AP"
+            });
+
+
             let loxlayerView;
             loxlayer
               .when(() => {
@@ -196,6 +215,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             // console.log(map);
             map.add(loxlayer);
+            map.add(csvLayer);
 
             const view = new MapView({
               map: map,
