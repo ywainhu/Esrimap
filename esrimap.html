@@ -7,7 +7,7 @@ Sign up for a free account and get an API key.
 https://developers.arcgis.com/documentation/mapping-apis-and-services/get-started/
 
 -->
-
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
@@ -29,10 +29,8 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
           height: 40%;
           width: 100%;
           }
-           
-          body {
-            display: flex;
-          }
+
+
 
           calcite-loader {
             align-self: center;
@@ -58,6 +56,17 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
           #form {
             background: #fff;
+          }
+
+          #select-by-rectangle{
+            width: 100%;
+          }
+          #clear-selection{
+            position: relative;
+            right: 0;
+            width: 100%;
+            text-align: left;
+
           }
 
           /* replaces esri-widget--panel */
@@ -451,20 +460,24 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
         </calcite-panel>
 
         <calcite-panel heading="选择" height-scale="l" data-panel-id="Selection" hidden>
+          <div id="selection-container">
           <div
-          id="select-by-rectangle"
-          class="esri-widget esri-widget--button esri-widget esri-interactive"
-          title="Select features by rectangle"
-        >
-          <span class="esri-icon-checkbox-unchecked"></span>
+            id="select-by-rectangle"
+            class="esri-widget esri-widget--button esri-widget esri-interactive"
+            title="Select features by rectangle"
+            >
+            <span class="esri-icon-checkbox-unchecked"></span>
+            <a>选择元素 </a>
+          </div>
+          <div
+            id="clear-selection"
+            class="esri-widget esri-widget--button esri-widget esri-interactive"
+            title="Clear selection"
+            >
+            <span class="esri-icon-erase"></span>
+            <a>清除选择 </a>
+          </div>
         </div>
-        <div
-        id="clear-selection"
-        class="esri-widget esri-widget--button esri-widget esri-interactive"
-        title="Clear selection"
-      >
-        <span class="esri-icon-erase"></span>
-      </div>
         </calcite-panel>
 
         <!-- Info panel (populates with info from the web map) -->
