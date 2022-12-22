@@ -101,6 +101,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             "esri/Basemap",
             "esri/layers/FeatureLayer",
             "esri/layers/CSVLayer",
+            "esri/layers/GeoJSONLayer",
             "esri/widgets/LayerList",
             "esri/widgets/FeatureTable",
             "esri/widgets/Legend",
@@ -122,6 +123,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             Basemap,
             FeatureLayer,
             CSVLayer,
+            GeoJSONLayer,
             LayerList,
             FeatureTable, 
             Legend, 
@@ -145,16 +147,15 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
                 }
             }
 
-            const popupTrailheads = {
-                "title": "Trailhead",
-                "content": "<b>Trail:</b> {TRL_NAME}<br><b>City:</b> {CITY_JUR}<br><b>Cross Street:</b> {X_STREET}<br><b>Parking:</b> {PARKING}<br><b>Elevation:</b> {ELEV_FT} ft"
+            const popupTemp = {
+                "title": "MB 排班",
+                "content": "<b>Name:</b> {Name}<br><b>委派车号:</b> {委派车号}<br><b>Start Terminal:</b> {Start Terminal}<br><b>End Terminal:</b> {End Terminal}<br><b>出发时间:</b> {出发时间} "
             }
-            const loxlayer = new FeatureLayer({
-            url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0",
-            renderer: layerRenderer,
-            outFields: ["TRL_NAME","CITY_JUR","X_STREET","PARKING","ELEV_FT"],
-            popupTemplate: popupTrailheads,
-            formTemplate: {
+            const larlayer = new GeoJSONLayer({
+              url: "LAR.geojson",
+              outFields: ["Name","委派车号","Start Terminal","End Terminal","出发时间"],
+              popupTemplate: popupTemp,
+              formTemplate: {
             // Autocasts to new FormTemplate
               title: "Update Features",
               description: "Provide information ",
@@ -196,11 +197,11 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             });
 
 
-            let loxlayerView;
-            loxlayer
+            let larlayerView;
+            larlayer
               .when(() => {
-                view.whenLayerView(loxlayer).then(function (layerView) {
-                  loxlayerView = layerView;
+                view.whenLayerView(larlayer).then(function (layerView) {
+                  larlayerView = layerView;
                 });
               })
               .catch(errorCallback);
@@ -214,7 +215,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             });
 
             // console.log(map);
-            map.add(loxlayer);
+            map.add(larlayer);
             map.add(csvLayer);
 
             const view = new MapView({
@@ -229,13 +230,13 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
               view: view, // required if using Arcade expressions using the $map global variable
               container: "form",
               groupDisplay: "sequential", // only display one group at a time
-              layer: loxlayer
+              layer: larlayer
             });
 
 
             const featureTable = new FeatureTable({
             view: view,
-            layer: loxlayer,
+            layer: larlayer,
             editingEnabled: true, 
             multiSortEnabled: true,
             highlightOnRowSelectEnabled: true,
@@ -317,7 +318,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             });
             
             function selectFeatures(geometry) {
-              if (loxlayerView) {
+              if (larlayerView) {
                 // create a query and set its geometry parameter to the
                 // rectangle that was drawn on the view
                 const query = {
@@ -327,7 +328,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
                 // query graphics from the csv layer view. Geometry set for the query
                 // can be polygon for point features and only intersecting geometries are returned
-                loxlayerView
+                larlayerView
                   .queryFeatures(query)
                   .then((results) => {
                     
