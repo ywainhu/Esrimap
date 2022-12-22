@@ -141,9 +141,12 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             const layerRenderer = {
                 "type": "simple",
                 "symbol": {
-                    "type": "simple-marker",
-                     color: "blue",
-                    "size": "8px"
+                  type: "simple-fill",
+                  color: "#f0ebe4",
+                  outline: {
+                    color: "#DCDCDC",
+                    width: "0.5px"
+                  }
                 }
             }
 
@@ -155,40 +158,8 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
               url: "LAR.geojson",
               outFields: ["Name","委派车号","Start Terminal","End Terminal","出发时间"],
               popupTemplate: popupTemp,
-              formTemplate: {
-            // Autocasts to new FormTemplate
-              title: "Update Features",
-              description: "Provide information ",
-              elements: [
-                {
-                // Autocasts to new GroupElement
-                type: "group",
-                label: "必填",
-                description: "Field inspector information",
-                elements: [
-                  {
-                    // Autocasts to new FieldElement
-                    type: "field",
-                    fieldName: "inspector",
-                    label: "name"
-                  }
-                  ]
-                }, 
-                // end of first group element
-                {
-                type: "group",
-                label: "选填",
-                description: "Type of insurance coverage",
-                elements: [
-                  {
-                    type: "field",
-                    fieldName: "rentinsur",
-                    label: "Renter's"
-                  }
-                ]
-                } // end of second group element
-              ]
-            }
+              render: layerRenderer
+              
           });
 
             const csvLayer = new CSVLayer({
@@ -220,7 +191,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             const view = new MapView({
               map: map,
-              center: [121.80543,34.02700], // Longitude, latitude
+              center: [121.80543,31.02700], // Longitude, latitude
               zoom: 8, // Zoom level
               container: "viewDiv" // Div element
             });
