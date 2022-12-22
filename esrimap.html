@@ -142,7 +142,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
                 "type": "simple",
                 "symbol": {
                   type: "simple-fill",
-                  color: "#f0ebe4",
+                  color: "#e15989",
                   outline: {
                     color: "#DCDCDC",
                     width: "0.5px"
@@ -194,7 +194,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             const view = new MapView({
               map: map,
-              center: [120.80543,31.02700], // Longitude, latitude
+              center: [120.00543,31.02700], // Longitude, latitude
               zoom: 6, // Zoom level
               container: "viewDiv" // Div element
             });
@@ -244,7 +244,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             // polygonGraphicsLayer will be used by the sketchviewmodel
             // show the polygon being drawn on the view
-            const polygonGraphicsLayer = new GraphicsLayer();
+            const polygonGraphicsLayer = new GraphicsLayer({title:'Selection Polygon'});
             map.add(polygonGraphicsLayer);
 
             // add the select by rectangle button the view
