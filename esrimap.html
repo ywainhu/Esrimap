@@ -156,6 +156,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             }
             const larlayer = new GeoJSONLayer({
               url: "LAR.geojson",
+              title:'LAR',
               outFields: ["Name","委派车号","Start Terminal","End Terminal","出发时间"],
               popupTemplate: popupTemp,
               render: layerRenderer
@@ -164,6 +165,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             const csvLayer = new CSVLayer({
               url: "MBTANKData.CSV",
+              title:'MB TANKER',
               copyright: "AP"
             });
 
@@ -182,17 +184,18 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             }
 
             const map = new Map({
-              basemap: "arcgis-topographic" // Basemap layer service
+              basemap: "arcgis-topographic" ,// Basemap layer service
+              layers: [csvLayer,larlayer]
             });
 
             // console.log(map);
-            map.add(larlayer);
-            map.add(csvLayer);
+            // map.add(larlayer);
+            // map.add(csvLayer);
 
             const view = new MapView({
               map: map,
-              center: [121.80543,31.02700], // Longitude, latitude
-              zoom: 8, // Zoom level
+              center: [120.80543,31.02700], // Longitude, latitude
+              zoom: 6, // Zoom level
               container: "viewDiv" // Div element
             });
 
