@@ -142,10 +142,36 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
                 "type": "simple",
                 symbol: {
                 type: "simple-marker",
-                color: "green",
+                color: "#e15989",
+                size:"10px",
                 outline: {
-                  color: "white"
+                  color: "black",
+                  width: "0.5px"
                 }}
+            }
+
+            const unique_renderer={
+              type: "unique-value",
+              field: "Medium Name",
+              uniqueValueInfos: [
+                { // First value and symbol
+                  value: 'LOX',
+                  label: "LOX",
+                  symbol: {
+                    type: "simple-fill",
+                    color: "red"
+                  }
+                },
+                { // second value and symbol
+                  value: 'LIN',
+                  label: "LIN",
+                  symbol: {
+                    type: "simple-fill",
+                    color: "blue"
+                  }
+                }
+              ]
+
             }
 
             const popupTemp = {
@@ -164,6 +190,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             const csvLayer = new CSVLayer({
               url: "MBTANKData.CSV",
               title:'MB TANKER',
+              renderer:unique_renderer,
               copyright: "AP"
             });
 
