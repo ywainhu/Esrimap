@@ -140,14 +140,12 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             const layerRenderer = {
                 "type": "simple",
-                "symbol": {
-                  type: "simple-marker",
-                  color: "#e15989",
-                  outline: {
-                    color: "#DCDCDC",
-                    width: "0.5px"
-                  }
-                }
+                symbol: {
+                type: "simple-marker",
+                color: "green",
+                outline: {
+                  color: "white"
+                }}
             }
 
             const popupTemp = {
@@ -159,7 +157,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
               title:'LAR',
               outFields: ["Name","委派车号","Start Terminal","End Terminal","出发时间"],
               popupTemplate: popupTemp,
-              render: layerRenderer
+              renderer: layerRenderer
               
           });
 
