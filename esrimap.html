@@ -186,7 +186,13 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             const baidulayer = new GeoJSONLayer({
               url: "baidu_path.geojson",
               title:'Biadu Path',
-              outFields:['origin','destination','distance','time']
+              outFields:['origin','destination','distance','time'],
+              renderers:{
+                type: "simple-line",
+                color: "orange",
+                width: 5,
+                cap: "round"
+              }
             })
 
             const larlayer = new GeoJSONLayer({
