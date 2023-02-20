@@ -396,7 +396,8 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             });
 
             const tablelist= new TableList({
-              view,
+              map: map,
+              selectionEnabled: true,
               container:"TableList-container"
             });
 
