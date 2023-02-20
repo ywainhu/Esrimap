@@ -395,6 +395,11 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
               container: "search-container"
             });
 
+            const tablelist= new TableList({
+              view,
+              container:"TableList-container"
+            });
+
             view.when(() => {
               // const { title, description, thumbnailUrl, avgRating } = map.portalItem;
               document.querySelector("#header-title").textContent = 'Map Test';
@@ -459,6 +464,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             <calcite-action data-action-id="layers" icon="layers" text="Layers"></calcite-action>
             <calcite-action data-action-id="basemaps" icon="basemap" text="Basemaps"></calcite-action>
             <calcite-action data-action-id="legend" icon="legend" text="Legend"></calcite-action>
+            <calcite-action data-action-id="Tablelist" icon="tables" text="表格"></calcite-action>
             <calcite-action data-action-id="featureForm"  icon="edit-attributes" text="更改属性"></calcite-action>
             <calcite-action data-action-id="print" icon="print" text="Print"></calcite-action>
             <calcite-action data-action-id="search" icon="search" text="查找"></calcite-action>
@@ -475,6 +481,9 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
         </calcite-panel>
         <calcite-panel heading="Legend" height-scale="l" data-panel-id="legend" hidden>
           <div id="legend-container"></div>
+        </calcite-panel>
+        <calcite-panel heading="Table" height-scale="l" data-panel-id="Tablelist" hidden>
+          <div id="Tablelist-container"></div>
         </calcite-panel>
         <calcite-panel heading="更改属性" height-scale="l" data-panel-id="featureForm" hidden>
           <div id="FeatureForm-container">
