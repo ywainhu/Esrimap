@@ -112,7 +112,8 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             "esri/geometry/geometryEngineAsync",
             "esri/widgets/Search",
             "esri/widgets/FeatureForm",
-            "esri/form/FormTemplate"
+            "esri/form/FormTemplate",
+            "esri/widgets/TableList"
           ],function(
             esriConfig, 
             Map,
@@ -134,7 +135,8 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
             geometryEngineAsync,
             Search,
             FeatureForm,
-            FormTemplate) {
+            FormTemplate,
+            TableList) {
 
             esriConfig.apiKey = "AAPKbddc507b56494edfa243a62cd6cf64afF_XwhWVolHr934skRIfCpSY4kWhK2qRfN5MeLBQS6MxNm6tNwYdUOCEWlwM7OnVL";
 
@@ -180,6 +182,13 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
                 "title": "MB 排班",
                 "content": "<b>Name:</b> {Name}<br><b>委派车号:</b> {委派车号}<br><b>Start Terminal:</b> {Start Terminal}<br><b>End Terminal:</b> {End Terminal}<br><b>出发时间:</b> {出发时间} "
             }
+
+            const baidulayer = new GeoJSONLayer({
+              url: "baidu_path.geojson",
+              title:'Biadu Path',
+              outFields:['origin','destination','distance','time']
+            })
+
             const larlayer = new GeoJSONLayer({
               url: "LAR.geojson",
               title:'LAR',
@@ -212,7 +221,7 @@ https://developers.arcgis.com/documentation/mapping-apis-and-services/get-starte
 
             const map = new Map({
               basemap: "arcgis-topographic" ,// Basemap layer service
-              layers: [csvLayer,larlayer]
+              layers: [csvLayer,larlayer,baidulayer]
             });
 
             // console.log(map);
